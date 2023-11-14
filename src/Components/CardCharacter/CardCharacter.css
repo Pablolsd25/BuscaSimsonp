@@ -1,0 +1,66 @@
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.card-character {
+  background-color: #ff81c1;
+  border-radius: 26px;
+  height: 18rem;
+  overflow: hidden;
+  position: relative;
+  width: calc(25% - 2rem);
+  margin-right: 1rem; /* Espaciado entre las tarjetas */
+  margin-top: 1rem;
+  display: inline-block;
+  /* Permite que las tarjetas fluyan en línea */
+
+  @media only screen and (max-width: 768px) {
+    width: 100%; /* Ocupar el ancho completo en dispositivos pequeños */
+    margin-right: 0;
+  }
+
+  @media only screen and (max-width: 600px) {
+    height: auto; /* Ajustar altura automáticamente en dispositivos más pequeños */
+  }
+}
+
+.card-character .overlap-group {
+  background-color: #2f64d6;
+  border-radius: 26px; /* Ajustar para que coincida con el borde de la tarjeta */
+  height: 30px;
+  width: 18rem;
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.38rem;
+  right: 0;
+}
+
+.card-character .text-wrapper {
+  color: #ffffff;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 16px; /* Reducir el tamaño del texto */
+  font-weight: 400;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+.card-character .element-krusty-the {
+  max-width: 100%; /* Ajustar la imagen para que ocupe el 100% del ancho de la tarjeta */
+  height: auto; /* Permitir que la altura de la imagen se ajuste proporcionalmente */
+  display: block;
+  border-radius: 26px; /* Ajustar para que coincida con el borde de la tarjeta */
+  margin: 0 auto; /* Centrar horizontalmente la imagen */
+}
+
+/* Media query para pantallas de escritorio */
+@media only screen and (min-width: 1024px) {
+  .card-character {
+    width: calc(25% - 2rem);
+    margin-right: 1rem;
+  }
+}

@@ -1,3 +1,12 @@
+@font-face {
+  font-family: "Simpsonfont";
+  src: url("./assets/Simpsonfont.otf") format("opentype"); /* Cambia la ruta y el formato según tu fuente */
+  /* Puedes agregar más formatos y rutas para compatibilidad cruzada */
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   background-color: #f8db27;
+  font-family: "Simpsonfont";
 }
