@@ -1,4 +1,5 @@
 import "../CardCharacter/CardCharacter.css";
+
 // eslint-disable-next-line react/prop-types
 export const CardCharacter = ({ name, image }) => {
   return (
@@ -8,7 +9,11 @@ export const CardCharacter = ({ name, image }) => {
           {name}
         </div>
       </div>
-      <img className="element-krusty-the" alt={name} src={image} />
+      {image ? (
+        <img className="element-krusty-the" alt={name} src={image} />
+      ) : (
+        <p>No hay imagen disponible</p>
+      )}
     </div>
   );
 };

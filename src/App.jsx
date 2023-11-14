@@ -11,34 +11,39 @@ function App() {
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    fetchData(currentPage, searchQuery);
-  }, [currentPage, searchQuery]);
-
-  const fetchData = (page, query) => {
+  const fetchData = async (page, query) => {
     setIsLoading(true);
 
-    const apiUrl = query
-      ? `https://apisimpsons.fly.dev/api/personajes/find/${query}?limit=8&page=${page}`
-      : `https://apisimpsons.fly.dev/api/personajes?limit=8&page=${page}`;
+    try {
+      const formattedQuery = query.toLowerCase();
 
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.docs && data.docs.length > 0) {
-          const characterData = data.docs.map((character) => ({
-            name: character.Nombre,
-            image: character.Imagen,
-          }));
-          setCharacters(characterData);
-          setTotalPages(data.totalPages);
-          setIsLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.error("Error en la solicitud", error);
-        setIsLoading(false);
-      });
+      const apiUrl = formattedQuery
+        ? `https://apisimpsons.fly.dev/api/personajes/find/${encodeURIComponent(
+            formattedQuery
+          )}?limit=8&page=${page}`
+        : `https://apisimpsons.fly.dev/api/personajes?limit=8&page=${page}`;
+
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      console.log("Data from API:", data);
+
+      if (data && data.docs && data.docs.length > 0) {
+        const characterData = data.docs.map((character) => ({
+          name: character.Nombre,
+          image: character.Imagen,
+        }));
+        setCharacters(characterData);
+        setTotalPages(data.totalPages);
+      } else {
+        setCharacters([]);
+        setTotalPages(1);
+      }
+    } catch (error) {
+      console.error("Error en la solicitud", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePageChange = (newPage) => {
@@ -49,7 +54,12 @@ function App() {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
+    setCurrentPage(1);
   };
+
+  useEffect(() => {
+    fetchData(currentPage, searchQuery);
+  }, [currentPage, searchQuery]);
 
   if (isLoading) {
     return <h1>Cargando</h1>;
@@ -58,20 +68,26 @@ function App() {
   return (
     <>
       <SearchBar onSearch={handleSearch} />
-      <div className="card-container">
-        {characters.map((character, index) => (
-          <CardCharacter
-            key={index}
-            name={character.name}
-            image={character.image}
+      {characters.length > 0 ? (
+        <>
+          <div className="card-container">
+            {characters.map((character, index) => (
+              <CardCharacter
+                key={index}
+                name={character.name}
+                image={character.image}
+              />
+            ))}
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
           />
-        ))}
-      </div>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+        </>
+      ) : (
+        <p>No se encontraron personajes.</p>
+      )}
     </>
   );
 }
