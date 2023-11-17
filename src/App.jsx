@@ -9,9 +9,8 @@ function App() {
   const [characters, setCharacters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchData = async (page, query) => {
+  const fetchData = async (page, query = "") => {
     setIsLoading(true);
 
     try {
@@ -30,6 +29,7 @@ function App() {
 
       if (data && data.docs && data.docs.length > 0) {
         const characterData = data.docs.map((character) => ({
+          id: character._id,
           name: character.Nombre,
           image: character.Imagen,
         }));
@@ -53,13 +53,12 @@ function App() {
   };
 
   const handleSearch = (query) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
+    fetchData(1, query);
   };
 
   useEffect(() => {
-    fetchData(currentPage, searchQuery);
-  }, [currentPage, searchQuery]);
+    fetchData(currentPage);
+  }, [currentPage]);
 
   if (isLoading) {
     return <h1>Cargando</h1>;
@@ -71,9 +70,9 @@ function App() {
       {characters.length > 0 ? (
         <>
           <div className="card-container">
-            {characters.map((character, index) => (
+            {characters.map((character) => (
               <CardCharacter
-                key={index}
+                key={character.id}
                 name={character.name}
                 image={character.image}
               />

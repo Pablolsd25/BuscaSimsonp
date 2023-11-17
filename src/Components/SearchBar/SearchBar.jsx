@@ -1,11 +1,12 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import Search from "../../assets/Search.png";
-import { CardCharacter } from "../CardCharacter/CardCharacter"; // Import the CardCharacter component
+import { CardCharacter } from "../CardCharacter/CardCharacter";
 import "./SearchBar.css";
-const SearchBar = () => {
+
+const SearchBar = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [showResults, setShowResults] = useState(false);
 
   const apiUrl = "https://apisimpsons.fly.dev/api/personajes";
 
@@ -24,7 +25,7 @@ const SearchBar = () => {
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
         const data = await response.json();
-        setSearchResults(data.result || []);
+        setSearchResults(data.docs || []);
       } else {
         console.error(
           "Tipo de contenido inválido en la respuesta:",
@@ -35,13 +36,14 @@ const SearchBar = () => {
       console.error("Error al obtener los datos:", error);
       setSearchResults([]);
     }
-    setShowResults(true);
   };
 
   const handleSearch = async () => {
     if (searchQuery.trim() !== "") {
       try {
         await fetchData();
+        onSearch(searchQuery, searchResults);
+        setSearchQuery(""); // Limpia la búsqueda después de obtener resultados
       } catch (error) {
         console.error("Error en la búsqueda:", error);
       }
@@ -51,7 +53,9 @@ const SearchBar = () => {
   return (
     <div className="nav-bar">
       <img className="search" alt="Buscar" src={Search} />
-      <div className={`card-container ${showResults ? "" : "hidden"}`}>
+      <div
+        className={`card-container ${searchResults.length > 0 ? "" : "hidden"}`}
+      >
         {searchResults.map((character) => (
           <CardCharacter
             key={character._id}
@@ -77,6 +81,10 @@ const SearchBar = () => {
       </div>
     </div>
   );
+};
+
+SearchBar.propTypes = {
+  onSearch: PropTypes.func.isRequired,
 };
 
 export default SearchBar;
